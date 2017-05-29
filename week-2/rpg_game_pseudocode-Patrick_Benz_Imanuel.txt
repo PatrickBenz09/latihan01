@@ -1,0 +1,140 @@
+OBJECT FUNCTION obj(parameter name, status)
+	ASSIGN name to this.name
+	ASSIGN status to this.status
+	ASSIGN 100 to this.health
+	ASSIGN "" to log
+
+	METHOD FUNCTION attack(parameter objOpp)
+		COMPUTE damage as the subtraction of this.status.atk AND objOpp.status.def
+		COMPUTE objOpp.health as the subtraction of objOpp.health AND damage
+		ASSIGN log + this.name + " deal " + damage + " damage" + newline to log
+		DISPLAY this.name + " deal " + damage + " damage"
+		IF objOpp.health is greater than or equal to 0
+			ASSIGN log + objOpp.name + " health: " + objOpp.health + newline to log
+			DISPLAY objOpp.name + " health: " + objOpp.health
+		ELSE
+			ASSIGN log + objOpp.name + " health: " + 0 + newline to log
+			DISPLAY objOpp.name + " health: " + 0
+		DISPLAY log
+		ASSIGN "" to log
+
+	METHOD FUNCTION heal(parameter objOpp)
+		IF this.status.holy is equal to TRUE
+			COMPUTE this.health as the addition of this.health AND this.status.holy
+			ASSIGN log + this.name + " health increased " + this.status.holy + newline to log
+			DISPLAY this.name + " health increased " + this.status.holy
+			ASSIGN log + this.name + " current health: " + this.health + newline to log
+			DISPLAY this.name + " current health: " + this.health
+		ELSE
+			ASSIGN log + this.name + " can't heal!" + newline to log
+			DISPLAY this.name + " can't heal!"
+		DISPLAY log
+		ASSIGN "" to log
+
+	METHOD FUNCTION magic(parameter objOpp)
+		IF this.status.cast is equal to TRUE
+			IF this.status.cast is equal to 1
+				ASSIGN this.status.mgc to damage
+				COMPUTE objOpp.health as the subtraction of objOpp.health AND damage
+				ASSIGN log + this.name + " deal " + damage + " magic damage" + newline to log
+				DISPLAY this.name + " deal " + damage + " magic damage"
+				IF objOpp.health is greater than or qeual to 0
+					ASSIGN log + objOpp.name + " health: " + objOpp.health + newline to log
+					DISPLAY objOpp.name + " health: " + objOpp.health
+				ELSE
+					ASSIGN log + objOpp.name + " health: " + 0 + newline to log
+					DISPLAY objOpp.name + " health: " + 0
+				ASSIGN 2 to this.status.cast
+			ELSE
+				ASSIGN log + "Casting the magic spell..." + newline to log
+				DISPLAY "Casting the magic spell..."
+				ASSIGN 1 to this.status.cast
+		ELSE
+			ASSIGN log + this.name + " can't cast magic!" + newline to log
+			DISPLAY this.name + " can't cast magic!"
+		DISPLAY log
+		ASSIGN "" to log
+
+
+FUNCTION attacks(parameter saya,musuh)
+	CALL Method attack in Object saya(parameter musuh)
+	CALL Method attack in Object musuh(parameter saya)
+
+FUNCTION heals(pameter saya,musuh)
+	CALL Method heal in Object saya
+	CALL Method attack in Object musuh(parameter saya)
+
+FUNCTION magics(parameter saya,musuh)
+	CALL Method magic in Object saya(parameter musuh)
+	CALL Method attack in Object musuh(parameter saya)
+
+ASSIGN object{atk:20, def:5, mgc:40, cast:2} to mage
+ASSIGN object{atk:15, def:5, holy:15} to priest
+ASSIGN object{atk:30, def:8} to knight
+ASSIGN object{atk:20, def:5, mgc:99999, cast:2} to kacung
+ASSIGN object mage, priest, knight, kacung as array in role
+
+ASSIGN object{atk:10, def:5} to enemyEasy
+ASSIGN object{atk:15, def:5} to enemyMedium
+ASSIGN object{atk:25, def:10} to enemyHard
+ASSIGN object enemyEasy, enemyMedium, enemyHard as array in enemyDifficulty
+
+GET name with text "What is your name: "
+IF name true
+	name = name
+ELSE
+	name = "Fadil Akbar"
+
+GET playerRole with text "Pick the difficulty: easy/medium/hard"
+	SWITCH playerRole TO
+		CASE "mage": ASSIGN role[0th index] to playerRole
+		CASE "priest": ASSIGN role[1st index] to playerRole
+		CASE "knight": ASSIGN role[2nd index] to playerRole
+		DEFAULT: ASSIGN role[3rd index] to playerRole
+
+GET difficulty with text "Pick the difficulty: easy/medium/hard"
+	SWITCH difficulty TO
+		case "easy": ASSIGN enemyDifficulty[0th index] to difficulty
+		case "medium": ASSIGN enemyDifficulty[1st index] to difficulty
+		case "hard": ASSIGN enemyDifficulty[2nd index] to difficulty
+		DEFAULT: ASSIGN enemyDifficulty[0th index] to difficulty
+
+ASSIGN playerRole to status
+ASSIGN "Ryan Hakim" to enName
+ASSIGN difficulty to enStatus
+
+ASSIGN new object obj(parameter name, status) to saya
+ASSIGN new object obj(parameter enName, enStatus) to musuh
+
+ASSIGN "" to input
+WHILE input not equal "exist" AND saya.health greater than 0 AND musuh.health greater than 0
+	IF contrary of saya.status.cast AND saya,status.cast equal to 2
+		GET input with text "What is your next move: " +
+                   			"--------------------------------" +
+                   			"> attack" +
+                   			"> heal" +
+                   			"> magic" +
+                   			"--------------------------------" +
+                   			"> exit [to EXIT]"
+    ELSE
+    	GET input with text "What is your next move: " +
+                   			"--------------------------------" +
+                   			"> attack" +
+                   			"> heal" +
+                   			"> magic [Magic Ready!]" +
+                   			"--------------------------------" +
+                   			"> exit [to EXIT]"
+    SWITCH input TO
+    	CASE "attack": CALL function attacks(parameter saya,musuh)
+    	CASE "heal": CALL function heals(parameter saya,musuh)
+    	CASE "magic": CALL function magics(parameter saya,musuh)
+    	DEFAULT": DISPLAY "..."
+
+IF saya.health is lesser than or equal to 0 AND musuh.health is lesser than or equal to 0
+	DISPLAY "Draw!"
+ELSE IF saya.health is lesser than or equal to 0 AND musuh.health is greater than 0
+	DISPLAY "You Lose!"
+ELSE IF saya.health is greater than 0 AND musuh.health is lesser than or equal to 0
+	DISPLAY "You Win!"
+ELSE
+	DISPLAY "..."
