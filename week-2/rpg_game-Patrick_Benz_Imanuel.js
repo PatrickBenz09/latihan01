@@ -1,5 +1,11 @@
-// http://jsfiddle.net/PatrickBenz09/rdnpyfk8/70/
+/*
+http://jsfiddle.net/PatrickBenz09/rdnpyfk8/70/
 
+Please run this file with jsfiddle in the above link ,
+It has been provided with a console panel
+
+Because this program needs to use prompt
+*/
 
 var obj = function(name, status) {
   this.name = name;
