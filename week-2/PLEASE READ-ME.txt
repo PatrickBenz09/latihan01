@@ -1,0 +1,9 @@
+/*
+http://jsfiddle.net/PatrickBenz09/rdnpyfk8/70/
+
+Please don't run the rpg_game-Patrick_Benz_Imanuel.js in normal console,  
+but by jsfiddle in the above link ,
+It has been provided with a console panel
+
+Because this program needs to use prompt
+*/
